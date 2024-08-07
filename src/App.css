@@ -1,0 +1,76 @@
+.container {
+  display: grid;
+  place-items: center;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: #01264c;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: 5px;
+  /* background-color: aqua; */
+  width: 90%;
+  height: 98%;
+}
+
+.main {
+  background-color: chocolate;
+  grid-column: span 5;
+  grid-row: span 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dailyStats {
+  grid-column: span 3;
+  grid-row: span 3;
+  background-color: white;
+}
+
+.futureDays {
+  grid-row: span 3;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.humadity,
+.visibility,
+.pressure{
+    background-color: white;
+    text-align: center;
+}
+
+.head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  background-color: bisque;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  margin-left: 1.5rem;
+}
+
+.temp {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dayCard{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color:chartreuse;
+    height: 33%;
+    border-bottom: 3px black solid;
+}
