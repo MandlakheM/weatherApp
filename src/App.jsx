@@ -9,6 +9,9 @@ import { MdOutlineWbSunny } from "react-icons/md";
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { fetchLocation, fetchWeatherForcast } from "./api/weather";
+import { FaWind } from "react-icons/fa";
+import { MdLocationPin } from "react-icons/md";
+import { CiBookmarkCheck } from "react-icons/ci";
 
 import partlyCloudy from "./assets/images/partlycloudy.png";
 import moderateRain from "./assets/images/moderaterain.png";
@@ -32,9 +35,16 @@ function App() {
   useEffect(() => {
     const defaultCity = localStorage.getItem("defaultCity") || "Cape Town";
     setCurrentLocation(defaultCity);
-    fetchWeatherForcast({ cityName: defaultCity, days: "3" }).then((data) =>
-      setWeather(data)
-    );
+
+    const savedWeatherData = localStorage.getItem("offline");
+    if (savedWeatherData) {
+      setWeather(JSON.parse(savedWeatherData));
+    } else {
+      fetchWeatherForcast({ cityName: defaultCity, days: "3" }).then((data) => {
+        setWeather(data);
+        localStorage.setItem("offline", JSON.stringify(data));
+      });
+    }
 
     const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
     setSavedLocations(savedCities);
@@ -56,9 +66,10 @@ function App() {
     setCurrentLocation(city.name);
     localStorage.setItem("defaultCity", city.name);
     setResults([]);
-    fetchWeatherForcast({ cityName: city.name, days: "3" }).then((data) =>
-      setWeather(data)
-    );
+    fetchWeatherForcast({ cityName: city.name, days: "3" }).then((data) => {
+      setWeather(data);
+      localStorage.setItem("offline", JSON.stringify(data));
+    });
   };
 
   const saveLocation = () => {
@@ -66,15 +77,15 @@ function App() {
       const newSavedLocations = [...savedLocations, currentLocation];
       setSavedLocations(newSavedLocations);
       localStorage.setItem("savedCities", JSON.stringify(newSavedLocations));
-      localStorage.setItem("offline", JSON.stringify(weather));
     }
   };
 
   const handleSavedLocation = (city) => {
     setCurrentLocation(city);
-    fetchWeatherForcast({ cityName: city, days: "3" }).then((data) =>
-      setWeather(data)
-    );
+    fetchWeatherForcast({ cityName: city, days: "3" }).then((data) => {
+      setWeather(data);
+      localStorage.setItem("offline", JSON.stringify(data));
+    });
   };
 
   const handleUnits = () => {
@@ -107,7 +118,7 @@ function App() {
     }
   };
 
-  const { current, location, forecast } = weather;
+  const { current = {}, location = {}, forecast = {} } = weather || {};
 
   const hourlyTemperatures =
     forecast?.forecastday?.[0]?.hour?.map((hour) =>
@@ -123,15 +134,22 @@ function App() {
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <button onClick={saveLocation}>Save Location</button>
-      <div>
+      <button id="saveLoc" onClick={saveLocation}>
+        Save Location <CiBookmarkCheck id="check" />
+      </button>
+      <div className="saved">
         {savedLocations.map((city, index) => (
-          <button key={index} onClick={() => handleSavedLocation(city)}>
+          <button
+            id="loc"
+            key={index}
+            onClick={() => handleSavedLocation(city)}
+          >
+            <MdLocationPin id="location" />
             {city}
           </button>
         ))}
       </div>
-      <button onClick={handleUnits}>
+      <button id="unit" onClick={handleUnits}>
         Switch to {units === "C" ? "Fahrenheit" : "Celsius"}
       </button>
     </Box>
@@ -147,12 +165,6 @@ function App() {
                 <TiWeatherWindy />
               </div>
               <div className="search">
-                {/* <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Enter city name"
-                /> */}
                 <TextField
                   id="standard-basic"
                   label="Enter city name"
@@ -167,6 +179,7 @@ function App() {
                   <ul>
                     {results.map((city, index) => (
                       <li key={index} onClick={() => handleLocation(city)}>
+                        <MdLocationPin id="location" />
                         {city.name}, {city.region}, {city.country}
                       </li>
                     ))}
@@ -176,27 +189,42 @@ function App() {
               <GiHamburgerMenu id="headerIcons" onClick={toggleDrawer(true)} />
               <Drawer open={open} anchor="right" onClose={toggleDrawer(false)}>
                 {DrawerList}
-              </Drawer>{" "}
+              </Drawer>
             </header>
+            <div className="mainIcon">
+              <img
+                src={getWeatherImage(current?.condition?.text)}
+                alt={current?.condition?.text}
+              />
+            </div>
             <div className="temp">
               <div className="currentTemp">
-                <img
+                {/* <img
                   src={getWeatherImage(current?.condition?.text)}
                   alt={current?.condition?.text}
-                />
-                <p>
+                /> */}
+                <p id="temp">
                   {units === "C" ? current?.temp_c : current?.temp_f}°{units}
                 </p>
-                <p>{location?.name}</p>
-                <p>{location?.country}</p>
+                <p id="cityName">
+                  <MdLocationPin id="location" />
+                  {location?.name}, {location?.country}
+                </p>
               </div>
               <div className="date">
-                <p>{new Date().toLocaleDateString()}</p>
+                <p id="cityName">
+                  {new Date().toLocaleString("en-ZA", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    weekday: "long",
+                  })}
+                </p>
               </div>
             </div>
           </div>
           <div className="humidity">
-            <FaDroplet />
+            <FaDroplet id="humidIcon" />
             <p>humidity</p>
             <p>{current?.humidity}%</p>
           </div>
@@ -224,7 +252,7 @@ function App() {
             })}
           </div>
           <div className="dailyStats">
-            <p>daily</p>
+            {/* <p>daily</p> */}
             <BarChart
               xAxis={[
                 {
@@ -245,12 +273,12 @@ function App() {
             />
           </div>
           <div className="visibility">
-            <MdRemoveRedEye />
+            <MdRemoveRedEye id="uvIcon" />
             <p>UV</p>
             <p>{current?.uv} of 10</p>
           </div>
           <div className="pressure">
-            <FaCompressArrowsAlt />
+            <FaWind id="windIcon" />
             <p>Wind</p>
             <p>{current?.wind_kph}</p>
             <p>{current?.wind_dir}</p>
