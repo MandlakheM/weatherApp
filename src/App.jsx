@@ -7,8 +7,36 @@ import { MdRemoveRedEye } from "react-icons/md";
 import { MdOutlineWbSunny } from "react-icons/md";
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { fetchLocation, fetchWeatherForcast } from "./api/weather";
 
 function App() {
+  const [locations, setLocations] = useState();
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
+  const [weather, setWeather] = useState({});
+
+  const handleSearch = () => {
+    if (search.length > 2) {
+      fetchLocation({ cityName: search }).then((data) => {
+        console.log("got data", data);
+        setResults(data || []);
+      });
+    } else {
+      console.log("Search term must be longer than 3 characters");
+    }
+  };
+
+  const handleLocation = (city) => {
+    console.log("Selected city:", city);
+    setResults([]); // Clear the results after selection (optional)
+    fetchWeatherForcast({ cityName: city.name, days: "3" }).then((data) => {
+      setWeather(data);
+      console.log("city info", data);
+    });
+  };
+
+  const { current, location, forcast } = weather;
+
   return (
     <>
       <div className="container">
@@ -16,15 +44,32 @@ function App() {
           <div className="main">
             <header className="head">
               <div className="logo"></div>
-              <div className="search">
-                <input type="text" name="" id="" />
+              <div>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Enter city name"
+                />
+                <button onClick={handleSearch}>Search</button>
+
+                {results.length > 0 && (
+                  <ul>
+                    {results.map((city, index) => (
+                      <li key={index} onClick={() => handleLocation(city)}>
+                        {city.name}, {city.region}, {city.country}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <GiHamburgerMenu />{" "}
             </header>
             <div className="temp">
               <div className="currentTemp">
                 <p>13😏C</p>
-                <p>SOWETO</p>
+                <p>{location?.name}</p>
+                <p>{location?.country}</p>
               </div>
               <div className="date">
                 <p>2024-08-07</p>
@@ -37,11 +82,19 @@ function App() {
             <p>18%</p>
           </div>
           <div className="futureDays">
-            <div className="dayCard">
-              <p>Tomorrow</p>
-              <p>icon</p>
-              <p>temparature</p>
-            </div>
+            {weather?.forecast?.forecastday?.map((item, index) => {
+             let date = new Date(item.date)
+             let options = {weekday:'long'}
+             let dayName = date.toLocaleDateString('en-US', options)
+             dayName=dayName.split(',')[0]
+             return (
+                <div key={index} className="dayCard">
+                  <p>{dayName}</p>
+                  <p>icon</p>
+                  <p>{item?.day?.avgtemp_c}</p>
+                </div>
+              );
+            })}
           </div>
           <div className="dailyStats">
             <p>daily</p>
