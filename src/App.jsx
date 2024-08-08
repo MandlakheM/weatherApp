@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaDroplet } from "react-icons/fa6";
@@ -31,11 +31,34 @@ function App() {
     setResults([]); // Clear the results after selection (optional)
     fetchWeatherForcast({ cityName: city.name, days: "3" }).then((data) => {
       setWeather(data);
+      localStorage.setItem('city',city.name )
       console.log("city info", data);
     });
   };
 
-  const { current, location, forcast } = weather;
+  useEffect(() => {
+    fetchWeatherData();
+  }, []);
+
+  function fetchWeatherData() {
+    let myCity = localStorage.getItem('city')
+    let cityName = "Cape Town"
+    if(myCity) cityName=myCity
+    fetchWeatherForcast({
+      cityName,
+      days: "3",
+    }).then((data) => {
+      setWeather(data);
+    });
+  }
+
+  const { current, location, forecast } = weather;
+
+  const hourlyTemperatures =
+    forecast?.forecastday?.[0]?.hour?.map((hour) => hour.temp_c) || [];
+  const hourlyTimes =
+    forecast?.forecastday?.[0]?.hour?.map((hour) => hour.time.split(" ")[1]) ||
+    [];
 
   return (
     <>
@@ -67,7 +90,8 @@ function App() {
             </header>
             <div className="temp">
               <div className="currentTemp">
-                <p>13😏C</p>
+                {/* <img src={url:`https:`+current?.condition?.icon} alt="" /> */}
+                <p>{current?.temp_c}</p>
                 <p>{location?.name}</p>
                 <p>{location?.country}</p>
               </div>
@@ -83,11 +107,11 @@ function App() {
           </div>
           <div className="futureDays">
             {weather?.forecast?.forecastday?.map((item, index) => {
-             let date = new Date(item.date)
-             let options = {weekday:'long'}
-             let dayName = date.toLocaleDateString('en-US', options)
-             dayName=dayName.split(',')[0]
-             return (
+              let date = new Date(item.date);
+              let options = { weekday: "long" };
+              let dayName = date.toLocaleDateString("en-US", options);
+              dayName = dayName.split(",")[0];
+              return (
                 <div key={index} className="dayCard">
                   <p>{dayName}</p>
                   <p>icon</p>
@@ -102,41 +126,15 @@ function App() {
               xAxis={[
                 {
                   id: "barCategories",
-                  data: [
-                    "00:00",
-                    "01:00",
-                    "02:00",
-                    "03:00",
-                    "04:00",
-                    "05:00",
-                    "06:00",
-                    "07:00",
-                    "08:00",
-                    "09:00",
-                    "10:00",
-                    "11:00",
-                    "12:00",
-                    "13:00",
-                    "14:00",
-                    "15:00",
-                    "16:00",
-                    "17:00",
-                    "18:00",
-                    "19:00",
-                    "20:00",
-                    "21:00",
-                    "22:00",
-                    "23:00",
-                  ],
+                  data: hourlyTimes,
                   scaleType: "band",
                 },
               ]}
               series={[
                 {
-                  data: [
-                    2, 5, 3, 4, 2, 8, 17, 6, 4, 2, 2, 3, 5, 6, 7, 9, 0, 8, 7, 6,
-                    3, 3, 5, 3,
-                  ],
+                  id: "temperature",
+                  data: hourlyTemperatures,
+                  label: "Hourly Temperature (°C)",
                 },
               ]}
               width={700}
@@ -144,14 +142,15 @@ function App() {
             />
           </div>
           <div className="visibility">
-            <FaCompressArrowsAlt />
-            <p>vis</p>
-            <p>800mb</p>
+            <MdRemoveRedEye />
+            <p>UV</p>
+            <p>{current?.uv} of 10</p>
           </div>
           <div className="pressure">
-            <MdRemoveRedEye />
-            <p>pressure</p>
-            <p>800mb</p>
+            <FaCompressArrowsAlt />
+            <p>Wind</p>
+            <p>{current?.wind_kph}</p>
+            <p>{current?.wind_dir}</p>
           </div>
         </div>
       </div>
