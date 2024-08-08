@@ -33,6 +33,19 @@ function App() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log("Location access granted.");
+          const { latitude, longitude } = position.coords;
+        },
+        (error) => {
+          console.log("Location access denied.", error);
+        }
+      );
+    }
+
     const defaultCity = localStorage.getItem("defaultCity") || "Cape Town";
     setCurrentLocation(defaultCity);
 
@@ -49,6 +62,16 @@ function App() {
     const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
     setSavedLocations(savedCities);
   }, []);
+
+  useEffect(() => {
+    if (search.length > 2) {
+      fetchLocation({ cityName: search }).then((data) => {
+        setResults(data || []);
+      });
+    } else {
+      setResults([]);
+    }
+  }, [search]);
 
   function handleSearch() {
     if (search.length > 2) {

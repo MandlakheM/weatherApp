@@ -5,30 +5,7 @@
   width: 100dvw;
   height: 100dvh;
   overflow: scroll;
-  background-color: #071F36;
-}
-
-.wrapper {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(7, 1fr);
-  gap: 5px;
-  /* background-color: aqua; */
-  width: 90%;
-  height: 98%;
-}
-
-.main {
-  /* background-color: #071F36; */
-  color: whitesmoke;
-  grid-column: span 5;
-  grid-row: span 4;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* background-image: url(./assets/images/img.png); */
-
-  border-radius: 10px;
+  background-color: #071f36;
   background: hsla(333, 100%, 53%, 1);
 
   background: linear-gradient(
@@ -53,16 +30,52 @@
 
 }
 
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: 5px;
+  /* background-color: aqua; */
+  width: 90%;
+  height: 98%;
+}
+
+.main {
+  /* background-color: #071F36; */
+  color: whitesmoke;
+  grid-column: span 5;
+  grid-row: span 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* background-image: url(./assets/images/img.png); */
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.12);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(6.6px);
+-webkit-backdrop-filter: blur(6.6px);
+border: 1px solid rgba(255, 255, 255, 0.32);
+}
+
 .dailyStats {
   grid-column: span 3;
   grid-row: span 3;
-  background-color: #071f36;
+  /* background-color: #071f36; */
   border-radius: 10px;
   color: whitesmoke;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(6.6px);
+-webkit-backdrop-filter: blur(6.6px);
+border: 1px solid rgba(255, 255, 255, 0.32);
 }
 
 .futureDays {
@@ -71,18 +84,24 @@
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-  border-radius: 10px;
+
 }
 
 .humidity,
 .visibility,
 .pressure {
-  background-color: #071f36;
+  /* background-color: #071f36; */
   text-align: center;
   border-radius: 10px;
   color: whitesmoke;
   display: grid;
   place-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.6px);
+  -webkit-backdrop-filter: blur(6.6px);
+  border: 1px solid rgba(255, 255, 255, 0.32);
 }
 
 .head {
@@ -120,6 +139,12 @@
   height: 33%;
   /* border-radius: 10px; */
   color: whitesmoke;
+  background: rgba(255, 255, 255, 0.12);
+/* border-radius: 16px; */
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(6.6px);
+-webkit-backdrop-filter: blur(6.6px);
+border: 1px solid rgba(255, 255, 255, 0.32);
 }
 
 .dayCard:nth-child(2) {
@@ -256,10 +281,10 @@
     font-size: 0.5rem;
   }
   .currentTemp,
-.date {
-  font-size: 1rem;
-}
-#temp{
+  .date {
+    font-size: 1rem;
+  }
+  #temp {
     font-size: 1.5rem;
-}
+  }
 }
