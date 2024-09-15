@@ -21,9 +21,11 @@ import heavyRain from "./assets/images/heavyrain.png";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
+import { IoLocationSharp } from "react-icons/io5";
+import { colors } from "@mui/material";
 
 function App() {
-  const [locations, setLocations] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
   const [weather, setWeather] = useState({});
@@ -33,30 +35,57 @@ function App() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    const fetchCityName = async (latitude, longitude) => {
+      setisLoading(true);
+      try {
+        const response = await fetch(
+          `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=48ed1209e4b03ec3fd55181bd2d8e231`
+        );
+        const data = await response.json();
+        return data[0]?.name || null;
+      } catch (error) {
+        console.error("Error fetching city name:", error);
+        return null;
+      }
+    };
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log("Location access granted.");
+        async (position) => {
           const { latitude, longitude } = position.coords;
+          const cityName = await fetchCityName(latitude, longitude);
+
+          if (cityName) {
+            setCurrentLocation(cityName);
+            fetchWeatherForcast({ cityName, days: "3" }).then((data) => {
+              setWeather(data);
+              localStorage.setItem("offline", JSON.stringify(data));
+              setisLoading(false); 
+            });
+          }
         },
         (error) => {
           console.log("Location access denied.", error);
+
+          const defaultCity =
+            localStorage.getItem("defaultCity") || "Cape Town";
+          setCurrentLocation(defaultCity);
+
+          const savedWeatherData = localStorage.getItem("offline");
+          if (savedWeatherData) {
+            setWeather(JSON.parse(savedWeatherData));
+            setisLoading(false); 
+          } else {
+            fetchWeatherForcast({ cityName: defaultCity, days: "3" }).then(
+              (data) => {
+                setWeather(data);
+                localStorage.setItem("offline", JSON.stringify(data));
+                setisLoading(false); 
+              }
+            );
+          }
         }
       );
-    }
-
-    const defaultCity = localStorage.getItem("defaultCity") || "Cape Town";
-    setCurrentLocation(defaultCity);
-
-    const savedWeatherData = localStorage.getItem("offline");
-    if (savedWeatherData) {
-      setWeather(JSON.parse(savedWeatherData));
-    } else {
-      fetchWeatherForcast({ cityName: defaultCity, days: "3" }).then((data) => {
-        setWeather(data);
-        localStorage.setItem("offline", JSON.stringify(data));
-      });
     }
 
     const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
@@ -78,6 +107,7 @@ function App() {
       fetchLocation({ cityName: search }).then((data) => {
         console.log("got data", data);
         setResults(data || []);
+        setSearch("");
       });
     } else {
       console.log("Search term must be longer than 3 characters");
@@ -160,7 +190,13 @@ function App() {
       <button id="saveLoc" onClick={saveLocation}>
         Save Location <CiBookmarkCheck id="check" />
       </button>
+      <button id="unit" onClick={handleUnits}>
+        Switch to {units === "C" ? "Fahrenheit" : "Celsius"}
+      </button>
       <div className="saved">
+        <br />
+        <h2>My cities</h2>
+        <br />
         {savedLocations.map((city, index) => (
           <button
             id="loc"
@@ -172,11 +208,16 @@ function App() {
           </button>
         ))}
       </div>
-      <button id="unit" onClick={handleUnits}>
-        Switch to {units === "C" ? "Fahrenheit" : "Celsius"}
-      </button>
     </Box>
   );
+
+  if (isLoading) {
+    return (
+      <div className="loaderWrapper">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -194,9 +235,10 @@ function App() {
                   variant="standard"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  color="warning"
                 />
 
-                <button onClick={handleSearch}>🔍</button>
+                {/* <button onClick={handleSearch}>🔍</button> */}
 
                 {results.length > 0 && (
                   <ul>

@@ -27,7 +27,6 @@
   );
 
   filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#FF0F7B", endColorstr="#F89B29", GradientType=1 );
-
 }
 
 .wrapper {
@@ -53,11 +52,11 @@
   border-radius: 10px;
 
   background: rgba(255, 255, 255, 0.12);
-border-radius: 16px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(6.6px);
--webkit-backdrop-filter: blur(6.6px);
-border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.6px);
+  -webkit-backdrop-filter: blur(6.6px);
+  border: 1px solid rgba(255, 255, 255, 0.32);
 }
 
 .dailyStats {
@@ -71,11 +70,11 @@ border: 1px solid rgba(255, 255, 255, 0.32);
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.12);
-border-radius: 16px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(6.6px);
--webkit-backdrop-filter: blur(6.6px);
-border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.6px);
+  -webkit-backdrop-filter: blur(6.6px);
+  border: 1px solid rgba(255, 255, 255, 0.32);
 }
 
 .futureDays {
@@ -84,7 +83,6 @@ border: 1px solid rgba(255, 255, 255, 0.32);
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-
 }
 
 .humidity,
@@ -140,11 +138,11 @@ border: 1px solid rgba(255, 255, 255, 0.32);
   /* border-radius: 10px; */
   color: whitesmoke;
   background: rgba(255, 255, 255, 0.12);
-/* border-radius: 16px; */
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(6.6px);
--webkit-backdrop-filter: blur(6.6px);
-border: 1px solid rgba(255, 255, 255, 0.32);
+  /* border-radius: 16px; */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.6px);
+  -webkit-backdrop-filter: blur(6.6px);
+  border: 1px solid rgba(255, 255, 255, 0.32);
 }
 
 .dayCard:nth-child(2) {
@@ -169,17 +167,25 @@ border: 1px solid rgba(255, 255, 255, 0.32);
 .search ul {
   position: absolute;
   font-size: 1rem;
-  /* background-color: floralwhite; */
+  background-color: floralwhite;
+  color: black;
   text-align: center;
   list-style: none;
   margin-top: 150px;
   width: 400px;
+  border-radius: 10px;
+  line-height: 1.7;
 }
 
 .search li {
   display: flex;
   /* flex-direction: column; */
   align-items: center;
+  cursor: pointer;
+}
+
+.search li:hover {
+  background-color: rgb(241, 171, 86);
 }
 
 .mainIcon {
@@ -226,12 +232,27 @@ border: 1px solid rgba(255, 255, 255, 0.32);
   flex-direction: column;
 }
 
-#saveLoc {
+#saveLoc,
+#unit {
   height: 2.5rem;
   border: none;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
+  padding: 5px 10px;
+  margin: 5px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#saveLoc {
+  background-color: #28a745;
+}
+
+#unit {
+  background-color: #007bff;
 }
 
 #loc {
@@ -286,5 +307,47 @@ border: 1px solid rgba(255, 255, 255, 0.32);
   }
   #temp {
     font-size: 1.5rem;
+  }
+}
+
+.loaderWrapper {
+  display: grid;
+  place-content: center;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  background-color:inherit;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 15px;
+  aspect-ratio: 1;
+  position: relative;
+}
+.loader::before,
+.loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #000;
+}
+.loader::before {
+  box-shadow: -26px 0;
+  animation: l10-1 1.5s infinite linear;
+}
+.loader::after {
+  transform: rotate(0deg) translateX(26px);
+  animation: l10-2 1.5s infinite linear;
+}
+@keyframes l10-1 {
+  50% {
+    transform: translateX(26px);
+  }
+}
+@keyframes l10-2 {
+  100% {
+    transform: rotate(-360deg) translateX(26px);
   }
 }
