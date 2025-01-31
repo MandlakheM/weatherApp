@@ -23,10 +23,7 @@ Provides cached weather data for offline access.
 
 ![Screenshot 2024-08-09 003637](https://github.com/user-attachments/assets/e36bafa1-8646-46a1-b02c-e9c580e392be)
 
-## Live Demo
 
-[cloudify-weather.netlify.app
-](https://cloudify-weather.netlify.app/)
 ## Installation 
 
 Step-by-step instructions on how to get the development environment running.
