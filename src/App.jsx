@@ -57,7 +57,7 @@ function App() {
 
           if (cityName) {
             setCurrentLocation(cityName);
-            fetchWeatherForcast({ cityName, days: "3" }).then((data) => {
+            fetchWeatherForcast({ cityName: cityName, days: "3" }).then((data) => {
               setWeather(data);
               localStorage.setItem("offline", JSON.stringify(data));
               setisLoading(false); 
