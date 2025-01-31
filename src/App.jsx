@@ -39,10 +39,11 @@ function App() {
       setisLoading(true);
       try {
         const response = await fetch(
-          `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=48ed1209e4b03ec3fd55181bd2d8e231`
+          `https://geocode.xyz/${latitude},${longitude}?json=1&auth=114163668033352e15780839x4681`
         );
         const data = await response.json();
-        return data[0]?.name || null;
+        // console.log(data)
+        return data.city || null;
       } catch (error) {
         console.error("Error fetching city name:", error);
         return null;
